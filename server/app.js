@@ -9,7 +9,8 @@ import "./utils/dbConnect.js"
 import publicRouter from "./controllers/public/public.js"
 //import middleware
 import middleware from "./auth/auth.js";
-
+// import private routes
+import privateRouter from "./controllers/private/private.js"
 const app = express()
 app.use(express.json()) 
 
@@ -25,6 +26,7 @@ app.get("/",(req,res)=>{
 
 app.use("/public",publicRouter)
 app.use(middleware)
+app.use("/private",privateRouter)
 app.listen(port,()=>{
     console.log(`sever is running at http://localhost:${port}`)
 })
