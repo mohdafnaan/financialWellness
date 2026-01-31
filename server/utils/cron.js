@@ -3,7 +3,7 @@ import userModel from "../models/User/User.js";
 import sendTip from "./tipMailer.js";
 
 function CRON (){
-cron.schedule("* * * * *",async ()=>{
+cron.schedule("45 23 * * *",async ()=>{
     const users = await userModel.find({tipsSent:{$lt:30}})
 
     for (let user of users){

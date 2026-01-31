@@ -1,15 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 const Home = () => {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleSendTips = async () => {
+    const token = localStorage.getItem("token");
+
+    // Step 1: If no token -> go to login
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    // Step 2: If token exists -> call backend API
+    try {
+      setLoading(true);
+
+      const res = await axios.get(
+        "http://localhost:5000/private/cron",
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );  
+      console.log(res.data)
+      if (res.data.isActive) {
+        localStorage.setItem("isActive", "true");
+      }
+      setMessage(res.data.msg);
+      navigate("/active");
+    } catch (error) {
+      setMessage("Something went wrong while sending tips");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen bg-linear-to-br from-green-600 to-teal-600 text-white">
 
-      {/* HERO SECTION */}
       <div className="flex flex-col items-center justify-center text-center px-6 py-24">
-        
+
         <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl mb-6">
           <span className="text-5xl">💰</span>
         </div>
@@ -24,11 +66,25 @@ const Home = () => {
         </p>
 
         <button
-          onClick={() => navigate("/register")}
-          className="bg-white text-green-700 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:bg-gray-100 transition active:scale-95"
+          onClick={handleSendTips}
+          className="bg-white text-green-700 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:bg-gray-100 transition"
         >
-          🚀 Start Sending Me Tips
+          {loading ? "Sending..." : "📩 Start Sending Tips"}
         </button>
+
+        {message && (
+          <p className="mt-4 text-yellow-200 font-semibold">
+            {message}
+          </p>
+        )}
+
+        <button
+          onClick={logout}
+          className="mt-6 bg-red-500 px-6 py-2 rounded-xl"
+        >
+          Logout
+        </button>
+
       </div>
 
       {/* FEATURES */}
@@ -64,16 +120,6 @@ const Home = () => {
             </p>
           </div>
 
-        </div>
-
-        {/* BOTTOM CTA */}
-        <div className="text-center mt-12">
-          <button
-            onClick={() => navigate("/register")}
-            className="bg-green-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-green-700 transition"
-          >
-            Start My 30-Day Plan
-          </button>
         </div>
 
       </div>
