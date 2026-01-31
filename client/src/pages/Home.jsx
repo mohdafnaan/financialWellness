@@ -1,0 +1,90 @@
+import React from "react";
+import { useNavigate } from "react-router";
+
+const Home = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-green-600 to-teal-600 text-white">
+
+      {/* HERO SECTION */}
+      <div className="flex flex-col items-center justify-center text-center px-6 py-24">
+        
+        <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl mb-6">
+          <span className="text-5xl">💰</span>
+        </div>
+
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          Salary Saver Pro
+        </h1>
+
+        <p className="max-w-xl text-white/90 mb-8">
+          Turn your monthly salary into smart savings and investments with 
+          daily expert tips delivered straight to your inbox for 30 days.
+        </p>
+
+        <button
+          onClick={() => navigate("/register")}
+          className="bg-white text-green-700 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:bg-gray-100 transition active:scale-95"
+        >
+          🚀 Start Sending Me Tips
+        </button>
+      </div>
+
+      {/* FEATURES */}
+      <div className="bg-white text-gray-800 rounded-t-[40px] px-6 py-16">
+
+        <h2 className="text-3xl font-bold text-center mb-10">
+          How It Works
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
+            <div className="text-4xl mb-3">📝</div>
+            <h3 className="font-semibold mb-2">Register</h3>
+            <p className="text-sm">
+              Enter your email and monthly salary while signing up.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
+            <div className="text-4xl mb-3">📧</div>
+            <h3 className="font-semibold mb-2">Daily Tips</h3>
+            <p className="text-sm">
+              Receive personalized saving and investment tips for 30 days.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
+            <div className="text-4xl mb-3">📈</div>
+            <h3 className="font-semibold mb-2">Grow Money</h3>
+            <p className="text-sm">
+              Learn how to budget, save and invest smartly.
+            </p>
+          </div>
+
+        </div>
+
+        {/* BOTTOM CTA */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => navigate("/register")}
+            className="bg-green-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-green-700 transition"
+          >
+            Start My 30-Day Plan
+          </button>
+        </div>
+
+      </div>
+
+      {/* FOOTER */}
+      <div className="text-center py-6 text-sm text-white/80">
+        Built to help you manage your salary smarter 💡
+      </div>
+
+    </div>
+  );
+};
+
+export default Home;
