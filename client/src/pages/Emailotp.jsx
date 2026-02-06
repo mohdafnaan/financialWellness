@@ -1,39 +1,42 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Emailotp = () => {
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const url = import.meta.env.VITE_URL
+  const url = import.meta.env.VITE_URL;
+
   const verifyOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    if (!otp.trim()) {
+      setError("Please enter the OTP");
+      return;
+    }
+
     try {
       setLoading(true);
-
-      const res = await axios.post(
-        `${url}/email-otp`,
-        {otp}
-      );
-
-      if(res.status === 200){
-        localStorage.setItem("token",res.data.token)
+      const res = await axios.post(`${url}/public/email-otp`, { otp: otp.trim() });
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
       }
       setSuccess(res.data.msg);
-      console.log(res)
-
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
-
+      setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setError(err.response?.data?.msg || "Verification failed");
     } finally {
@@ -42,46 +45,38 @@ const Emailotp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 to-teal-600 px-4">
-
-      <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md">
-
-        <h2 className="text-2xl font-bold text-center mb-4">
-          Verify Your Email ✉️
-        </h2>
-
-        <p className="text-sm text-center text-gray-500 mb-6">
-          Enter the OTP sent to your email
-        </p>
-
-        <form onSubmit={verifyOtp} className="space-y-4">
-
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            className="w-full px-4 py-3 border rounded-xl"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-
-          {error && (
-            <p className="text-red-600 text-sm text-center">{error}</p>
-          )}
-
-          {success && (
-            <p className="text-green-600 text-sm text-center">{success}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 text-white py-3 rounded-xl font-bold"
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
-          </button>
-
-        </form>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="text-center space-y-1">
+          <div className="text-4xl">✉️</div>
+          <CardTitle className="text-2xl">Verify Your Email</CardTitle>
+          <CardDescription>
+            Enter the OTP sent to your email
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={verifyOtp} className="space-y-4">
+            <div className="space-y-2">
+              <Input
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                maxLength={4}
+                className="text-center text-lg tracking-widest"
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-destructive font-medium">{error}</p>
+            )}
+            {success && (
+              <p className="text-sm text-emerald-600 font-medium">{success}</p>
+            )}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Verifying..." : "Verify OTP"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

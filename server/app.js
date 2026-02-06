@@ -1,13 +1,13 @@
 import express from "express"
 import dotenv from "dotenv"
 dotenv.config();
-// import cors from "cors";
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-// const corsObject = {
-//     origin : ["http://localhost:5173"],
-//     methods : ["POST","GET","PUT","DELETE"]
-// }
+const corsObject = {
+    origin : ["http://localhost:5173"],
+    methods : ["POST","GET","PUT","DELETE"]
+}
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 // import database
@@ -21,23 +21,19 @@ import middleware from "./auth/auth.js";
 import privateRouter from "./controllers/private/private.js"
 const app = express()
 app.use(express.json()) 
-// app.use(cors(corsObject))
+app.use(cors(corsObject))
 const port = process.env.PORT;
 const buildPath = path.join(__dirname,"dist")
-// app.get("/",(req,res)=>{
-//     try {
-//         res.status(200).json({msg:"sever is live"})
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).json(error)
-//     }
-// })
-app.get("*",(req,res)=>{
-    res.sendFile(path.join(buildPath,"index.html"))
-})
-app.use("/public",publicRouter)
-app.use(middleware)
-app.use("/private",privateRouter)
+
+// API routes MUST come before the catch-all for SPA
+app.use("/public", publicRouter);
+app.use(middleware);
+app.use("/private", privateRouter);
+
+// Catch-all for SPA - serve index.html for non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
 app.listen(port,()=>{
     console.log(`sever is running at http://localhost:${port}`)
 })

@@ -8,6 +8,7 @@ function middleware(req,res,next){
         if(!token){
             res.status(400).json({msg: "invalid token"})
         }
+        console.log(process.env.JWT_SECKEY)
         const decode = jwt.verify(token,process.env.JWT_SECKEY);
         req.user = decode;
         next()

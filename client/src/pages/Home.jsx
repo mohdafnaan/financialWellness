@@ -1,43 +1,39 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Home = () => {
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const url = import.meta.env.VITE_URL
-  
+  const url = import.meta.env.VITE_URL;
+
   const handleSendTips = async () => {
     const token = localStorage.getItem("token");
-
-    // Step 1: If no token -> go to login
     if (!token) {
       navigate("/login");
       return;
     }
-
-    // Step 2: If token exists -> call backend API
     try {
       setLoading(true);
-
-      const res = await axios.get(
-        `${url}/private/cron`,
-        {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }
-      );  
-      console.log(res.data)
+      const res = await axios.get(`${url}/private/cron`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
       if (res.data.isActive) {
         localStorage.setItem("isActive", "true");
       }
       setMessage(res.data.msg);
       navigate("/active");
     } catch (error) {
-      setMessage("Something went wrong while sending tips");
+      setMessage("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -49,87 +45,71 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-green-600 to-teal-600 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-500 to-teal-600">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <Card className="border-0 shadow-2xl bg-white/95 backdrop-blur">
+            <CardHeader className="space-y-2 pb-2">
+              <div className="text-5xl">💰</div>
+              <CardTitle className="text-3xl">Salary Saver Pro</CardTitle>
+              <CardDescription className="text-base">
+                Turn your monthly salary into smart savings. Get daily expert
+                tips delivered to your inbox for 30 days.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                size="lg"
+                onClick={handleSendTips}
+                disabled={loading}
+                className="w-full text-base"
+              >
+                {loading ? "Sending..." : "Start Sending Tips"}
+              </Button>
+              {message && (
+                <p className="text-sm text-amber-600 font-medium">{message}</p>
+              )}
+              <Button variant="outline" onClick={logout} className="w-full">
+                Logout
+              </Button>
+            </CardContent>
+          </Card>
 
-      <div className="flex flex-col items-center justify-center text-center px-6 py-24">
+          <div className="mt-16 grid gap-6 md:grid-cols-3">
+            <Card className="bg-white/90 border-0">
+              <CardHeader>
+                <div className="text-3xl mb-2">📝</div>
+                <CardTitle className="text-lg">Register</CardTitle>
+                <CardDescription>
+                  Enter your email and monthly salary to sign up.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-white/90 border-0">
+              <CardHeader>
+                <div className="text-3xl mb-2">📧</div>
+                <CardTitle className="text-lg">Daily Tips</CardTitle>
+                <CardDescription>
+                  Receive personalized saving tips for 30 days.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-white/90 border-0">
+              <CardHeader>
+                <div className="text-3xl mb-2">📈</div>
+                <CardTitle className="text-lg">Grow</CardTitle>
+                <CardDescription>
+                  Learn to budget, save and invest smartly.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
 
-        <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl mb-6">
-          <span className="text-5xl">💰</span>
-        </div>
-
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
-          Salary Saver Pro
-        </h1>
-
-        <p className="max-w-xl text-white/90 mb-8">
-          Turn your monthly salary into smart savings and investments with 
-          daily expert tips delivered straight to your inbox for 30 days.
-        </p>
-
-        <button
-          onClick={handleSendTips}
-          className="bg-white text-green-700 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:bg-gray-100 transition"
-        >
-          {loading ? "Sending..." : "📩 Start Sending Tips"}
-        </button>
-
-        {message && (
-          <p className="mt-4 text-yellow-200 font-semibold">
-            {message}
+          <p className="mt-12 text-sm text-white/80">
+            Built to help you manage your salary smarter
           </p>
-        )}
-
-        <button
-          onClick={logout}
-          className="mt-6 bg-red-500 px-6 py-2 rounded-xl"
-        >
-          Logout
-        </button>
-
-      </div>
-
-      {/* FEATURES */}
-      <div className="bg-white text-gray-800 rounded-t-[40px] px-6 py-16">
-
-        <h2 className="text-3xl font-bold text-center mb-10">
-          How It Works
-        </h2>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-
-          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
-            <div className="text-4xl mb-3">📝</div>
-            <h3 className="font-semibold mb-2">Register</h3>
-            <p className="text-sm">
-              Enter your email and monthly salary while signing up.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
-            <div className="text-4xl mb-3">📧</div>
-            <h3 className="font-semibold mb-2">Daily Tips</h3>
-            <p className="text-sm">
-              Receive personalized saving and investment tips for 30 days.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-green-50 text-center shadow">
-            <div className="text-4xl mb-3">📈</div>
-            <h3 className="font-semibold mb-2">Grow Money</h3>
-            <p className="text-sm">
-              Learn how to budget, save and invest smartly.
-            </p>
-          </div>
-
         </div>
-
       </div>
-
-      {/* FOOTER */}
-      <div className="text-center py-6 text-sm text-white/80">
-        Built to help you manage your salary smarter 💡
-      </div>
-
     </div>
   );
 };

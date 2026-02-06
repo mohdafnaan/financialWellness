@@ -1,50 +1,46 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const Register = () => {
   const navigate = useNavigate();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [salary, setSalary] = useState("");
   const [password, setPassword] = useState("");
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const url = import.meta.env.VITE_URL;
 
-  const url = import.meta.env.VITE_URL
-  
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     if (!name || !email || !salary || !password) {
       setError("All fields are required");
       return;
     }
-
     try {
       setLoading(true);
-      const payload = {
-        fullName : name,
+      await axios.post(`${url}/public/register`, {
+        fullName: name,
         email,
-        salary,
+        salary: Number(salary),
         password,
-      }
-
-      console.log(payload)
-
-      const res = await axios.post(`${url}/register`,payload);
-
-      setSuccess("Registration successful! Tips will start soon.");
-      console.log(res.data);
-
-      setTimeout(() => {
-        navigate("/email-otp");
-      }, 2000);
+      });
+      setSuccess("Registration successful! Check your email for the OTP.");
+      setTimeout(() => navigate("/email-otp"), 2000);
     } catch (err) {
       setError(err.response?.data?.msg || "Registration failed");
     } finally {
@@ -53,115 +49,81 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-600 to-teal-600 flex items-center justify-center px-4 py-10">
-
-      <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl p-8">
-
-        <div className="text-center mb-6">
-          <div className="text-5xl mb-2">💸</div>
-
-          <h2 className="text-3xl font-extrabold text-gray-800">
-            Start Saving Smarter
-          </h2>
-
-          <p className="text-gray-500 mt-1">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-2xl">
+        <CardHeader className="text-center space-y-1">
+          <div className="text-4xl">💸</div>
+          <CardTitle className="text-2xl">Start Saving Smarter</CardTitle>
+          <CardDescription>
             Register to receive 30 days of salary saving tips
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="salary">Monthly Salary (₹)</Label>
+              <Input
+                id="salary"
+                type="number"
+                placeholder="e.g. 50000"
+                value={salary}
+                onChange={(e) => setSalary(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Used for personalized saving tips
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Create a strong password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-destructive font-medium">{error}</p>
+            )}
+            {success && (
+              <p className="text-sm text-emerald-600 font-medium">{success}</p>
+            )}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="text-primary font-medium hover:underline"
+            >
+              Login
+            </button>
           </p>
-        </div>
-
-        <form onSubmit={handleRegister} className="space-y-4">
-
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          {/* Salary */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Monthly Salary (₹)
-            </label>
-            <input
-              type="number"
-              placeholder="e.g. 50000"
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={salary}
-              onChange={(e) => setSalary(e.target.value)}
-            />
-            <p className="text-xs text-gray-400 mt-1">
-              Used to generate personalized saving tips
-            </p>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Create a strong password"
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-600 text-sm text-center">{error}</p>
-          )}
-
-          {success && (
-            <p className="text-green-600 text-sm text-center">{success}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-4 rounded-xl text-white font-bold transition ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-600 hover:bg-green-700"
-            }`}
-          >
-            {loading ? "Creating Account..." : "Start My 30-Day Tips 🚀"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Already have an account?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-green-600 font-semibold cursor-pointer"
-          >
-            Login here
-          </span>
-        </p>
-
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

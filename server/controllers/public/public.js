@@ -19,22 +19,21 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ msg: "user already exists" });
     }
     let bPass = await bcrypt.hash(password, 10);
-    let emailOtp = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    let emailOtp = String(Math.floor(Math.random() * (9999 - 1000) + 1000));
 
     await sendMail(
       email,
-      "WELCOME USER",
-      `Enter the OTP to verify email :\n${emailOtp}`,
+      "WELCOME USER - Verify Your Email",
+      `Your verification OTP is: ${emailOtp}\n\nEnter this code to verify your email.`,
     );
 
-    let user = {
+    await userModel.create({
       fullName,
       email,
       emailOtp,
       password: bPass,
-      salary,
-    };
-    await userModel.insertOne(user);
+      salary: Number(salary),
+    });
     res.status(200).json({ msg: "account created" });
   } catch (error) {
     console.log(error);
@@ -45,7 +44,7 @@ router.post("/register", async (req, res) => {
 // otp - email
 router.post("/email-otp", async (req, res) => {
   try {
-    let otp = req.body.otp;
+    let otp = String(req.body.otp || "").trim();
     let user = await userModel.findOne({ emailOtp: otp });
     if (!user) {
       return res.status(400).json({ msg: "invalid otp" });
