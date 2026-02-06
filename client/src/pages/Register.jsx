@@ -14,6 +14,8 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const url = import.meta.env.VITE_URL
+  
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -35,7 +37,7 @@ const Register = () => {
 
       console.log(payload)
 
-      const res = await axios.post("http://localhost:5000/public/register",payload);
+      const res = await axios.post(`${url}/register`,payload);
 
       setSuccess("Registration successful! Tips will start soon.");
       console.log(res.data);

@@ -10,7 +10,7 @@ const Emailotp = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const url = import.meta.env.VITE_URL
   const verifyOtp = async (e) => {
     e.preventDefault();
     setError("");
@@ -20,15 +20,19 @@ const Emailotp = () => {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:5000/public/email-otp",
+        `${url}/email-otp`,
         {otp}
       );
 
+      if(res.status === 200){
+        localStorage.setItem("token",res.data.token)
+      }
       setSuccess(res.data.msg);
+      console.log(res)
 
       setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+        navigate("/");
+      }, 1000);
 
     } catch (err) {
       setError(err.response?.data?.msg || "Verification failed");

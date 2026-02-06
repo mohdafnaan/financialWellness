@@ -10,6 +10,7 @@ const Login = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const url = import.meta.env.VITE_URL
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post("http://localhost:5000/public/login", {
+      const res = await axios.post(`${url}/public/login`, {
         email,
         password,
       });

@@ -7,7 +7,8 @@ const Home = () => {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const url = import.meta.env.VITE_URL
+  
   const handleSendTips = async () => {
     const token = localStorage.getItem("token");
 
@@ -22,7 +23,7 @@ const Home = () => {
       setLoading(true);
 
       const res = await axios.get(
-        "http://localhost:5000/private/cron",
+        `${url}/private/cron`,
         {
           headers: {
             authorization: `Bearer ${token}`,
