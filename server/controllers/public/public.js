@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ msg: "user not found" });
     }
 
-    let hPass = bcrypt.compare(password, user.password);
+    let hPass = await bcrypt.compare(password, user.password);
 
     if (!hPass) {
       return res.status(400).json({ msg: "invalid credentials" });
