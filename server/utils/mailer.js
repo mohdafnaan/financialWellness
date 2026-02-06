@@ -2,7 +2,7 @@ import mailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-async function sendMail(to, subject, text) {
+async function sendMail(to, subject, text, html) {
   const pass = process.env.GMAIL_APP_PASSWORD || process.env.PASS;
   if (!pass) {
     throw new Error(
@@ -18,12 +18,15 @@ async function sendMail(to, subject, text) {
     },
   });
 
-  const info = await transporter.sendMail({
+  const mailOptions = {
     from: process.env.GMAIL_USER || "mohdafnaan833@gmail.com",
     to,
     subject,
     text,
-  });
+  };
+  if (html) mailOptions.html = html;
+
+  const info = await transporter.sendMail(mailOptions);
 
   console.log("Email sent:", info.messageId);
   return info;

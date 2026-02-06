@@ -5,7 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 const corsObject = {
-    origin : ["http://localhost:5173"],
+    origin : ["http://localhost:5173","https://finance.afnaaan.in"],
     methods : ["POST","GET","PUT","DELETE"]
 }
 const __filename = fileURLToPath(import.meta.url)
