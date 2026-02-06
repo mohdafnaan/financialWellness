@@ -27,13 +27,15 @@ const buildPath = path.join(__dirname,"dist")
 
 // API routes MUST come before the catch-all for SPA
 app.use("/public", publicRouter);
-app.use(middleware);
-app.use("/private", privateRouter);
+app.use("/private", middleware, privateRouter);
+
+// Serve static assets (JS, CSS, images) from dist
+app.use(express.static(buildPath));
 
 // Catch-all for SPA - serve index.html for non-API routes
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
-app.listen(port,()=>{
-    console.log(`sever is running at http://localhost:${port}`)
-})
+app.listen(port, () => {
+  console.log(`server is running at http://localhost:${port}`);
+});
