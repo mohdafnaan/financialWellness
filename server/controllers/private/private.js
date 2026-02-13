@@ -7,14 +7,15 @@ const router = express.Router();
 
 router.get("/cron",async (req,res)=>{
     try {
-        await sendMail(
-            req.user.email,
-            "Service Started – Financial Wellness Tips",
-            "We're excited to let you know that your service has started! You will receive financial wellness tips daily at 9:00 PM.",
-            serviceStartedEmail
-        );
-        await CRON();
-        await userModel.updateOne({email : req.user.email},{$set: {isActive : true}})
+        if (!req.user.isActive) {
+            await sendMail(
+                req.user.email,
+                "Service Started – Financial Wellness Tips",
+                "We're excited to let you know that your service has started! You will receive financial wellness tips daily at 9:00 PM.",
+                serviceStartedEmail
+            );
+            await userModel.updateOne({email : req.user.email},{$set: {isActive : true}})
+        }
         res.status(200).json({msg : "tips will be sent everyday at 9:00 PM", isActive: true})
     } catch (error) {
         console.log(error);

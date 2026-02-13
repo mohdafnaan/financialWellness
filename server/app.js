@@ -19,6 +19,7 @@ import publicRouter from "./controllers/public/public.js"
 import middleware from "./auth/auth.js";
 // import private routes
 import privateRouter from "./controllers/private/private.js"
+import CRON from "./utils/cron.js";
 const app = express()
 app.use(express.json()) 
 app.use(cors(corsObject))
@@ -36,6 +37,9 @@ app.use(express.static(buildPath));
 app.get("*", (req, res) => {
   res.sendFile(path.join(buildPath, "index.html"));
 });
+// Initialize Cron Jobs
+CRON();
+
 app.listen(port, () => {
   console.log(`server is running at http://localhost:${port}`);
 });

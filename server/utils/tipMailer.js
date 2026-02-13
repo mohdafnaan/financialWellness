@@ -2,28 +2,32 @@ import mailer from 'nodemailer';
 import dotenv from "dotenv";
 dotenv.config();
 import tips from './tips.js';
+import { tipEmailTemplate } from './templates/tipEmail.js';
 
-async function sendTip(email,day) {
+async function sendTip(email, day) {
     
     const transporter = mailer.createTransport({
-        service : "gmail",
-        auth : {
-            user : "mohdafnaan833@gmail.com",
-            pass : process.env.PASS
+        service: "gmail",
+        auth: {
+            user: "mohdafnaan833@gmail.com",
+            pass: process.env.PASS
         }
-    })
-    const sender = await transporter.sendMail({
-        from : "mohdafnaan833@gmail.com",
-        to : email,
-        subject : `Day ${day + 1} : Money Saving Tip`,
-        html :` 
-            <h2>Day ${day + 1} Tip</h2>
-            <p>${tips[day]}</p>
-            <p>See you tomorrow!</p>
-            `
-            }
-)
-console.log(`tip sent`,sender.messageId)
+    });
+
+    const tipContent = tips[day] || "Stay consistent with your financial goals!";
+    const currentDay = day + 1;
+
+    try {
+        const info = await transporter.sendMail({
+            from: '"Financial Wellness" <mohdafnaan833@gmail.com>',
+            to: email,
+            subject: `Day ${currentDay}: Money Saving Tip`,
+            html: tipEmailTemplate(currentDay, tipContent)
+        });
+        console.log(`Tip sent for Day ${currentDay} to ${email}: ${info.messageId}`);
+    } catch (error) {
+        console.error(`Error sending tip to ${email}:`, error);
+    }
 }
 
 export default sendTip;
